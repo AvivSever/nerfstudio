@@ -136,7 +136,7 @@ class ColmapConverterToNerfstudioDataset(BaseConverterToNerfstudioDataset):
             summary_log.append(colmap_utils.get_matching_summary(num_frames, num_matched_frames))
 
         else:
-            CONSOLE.log(
+            print(
                 "[bold yellow]Warning: Could not find existing COLMAP results. " "Not generating transforms.json"
             )
         return summary_log

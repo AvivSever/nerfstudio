@@ -89,7 +89,7 @@ def polycam_to_json(
     summary.append(f"Final dataset is {len(image_filenames) - skipped_frames} frames.")
 
     if len(image_filenames) - skipped_frames == 0:
-        CONSOLE.print("[bold red]No images remain after filtering, exiting")
+        print("[bold red]No images remain after filtering, exiting")
         sys.exit(1)
 
     return summary
@@ -148,7 +148,7 @@ def process_images(
 
     # Save json
     if num_frames == 0:
-        CONSOLE.print("[bold red]No images found, exiting")
+        print("[bold red]No images found, exiting")
         sys.exit(1)
 
     return summary_log, polycam_image_filenames

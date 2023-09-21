@@ -140,22 +140,22 @@ def convert_video_to_images(
 
     for i in crop_factor:
         if i < 0 or i > 1:
-            CONSOLE.print("[bold red]Error: Invalid crop factor. All crops must be in [0,1].")
+            print("[bold red]Error: Invalid crop factor. All crops must be in [0,1].")
             sys.exit(1)
 
     if video_path.is_dir():
-        CONSOLE.print(f"[bold red]Error: Video path is a directory, not a path: {video_path}")
+        print(f"[bold red]Error: Video path is a directory, not a path: {video_path}")
         sys.exit(1)
     if video_path.exists() is False:
-        CONSOLE.print(f"[bold red]Error: Video does not exist: {video_path}")
+        print(f"[bold red]Error: Video does not exist: {video_path}")
         sys.exit(1)
 
     with status(msg="Converting video to images...", spinner="bouncingBall", verbose=verbose):
         num_frames = get_num_frames_in_video(video_path)
         if num_frames == 0:
-            CONSOLE.print(f"[bold red]Error: Video has no frames: {video_path}")
+            print(f"[bold red]Error: Video has no frames: {video_path}")
             sys.exit(1)
-        CONSOLE.print("Number of frames in video:", num_frames)
+        print("Number of frames in video:", num_frames)
 
         ffmpeg_cmd = f'ffmpeg -i "{video_path}"'
 
@@ -186,10 +186,10 @@ def convert_video_to_images(
         ffmpeg_cmd += " -vsync vfr"
 
         if spacing > 1:
-            CONSOLE.print("Number of frames to extract:", math.ceil(num_frames / spacing))
+            print("Number of frames to extract:", math.ceil(num_frames / spacing))
             select_cmd = f"thumbnail={spacing},setpts=N/TB,"
         else:
-            CONSOLE.print("[bold red]Can't satisfy requested number of frames. Extracting all frames.")
+            print("[bold red]Can't satisfy requested number of frames. Extracting all frames.")
             ffmpeg_cmd += " -pix_fmt bgr8"
             select_cmd = ""
 
@@ -205,7 +205,7 @@ def convert_video_to_images(
         summary_log = []
         summary_log.append(f"Starting with {num_frames} video frames")
         summary_log.append(f"We extracted {num_final_frames} images with prefix '{image_prefix}'")
-        CONSOLE.log("[bold green]:tada: Done converting video to images.")
+        print("[bold green]:tada: Done converting video to images.")
 
         return summary_log, num_final_frames
 
@@ -252,7 +252,7 @@ def copy_images_list(
     # Images should be 1-indexed for the rest of the pipeline.
     for idx, image_path in enumerate(image_paths):
         if verbose:
-            CONSOLE.log(f"Copying image {idx + 1} of {len(image_paths)}...")
+            print(f"Copying image {idx + 1} of {len(image_paths)}...")
         copied_image_path = image_dir / f"{image_prefix}{idx + 1:05d}{image_path.suffix}"
         try:
             # if CR2 raw, we want to read raw and write RAW_CONVERTED_SUFFIX, and change the file suffix for downstream processing
@@ -269,7 +269,7 @@ def copy_images_list(
                 # Slow path; let ffmpeg perform autorotation (and clear metadata)
                 ffmpeg_cmd = f"ffmpeg -y -i {image_path} -metadata:s:v:0 rotate=0 {copied_image_path}"
                 if verbose:
-                    CONSOLE.log(f"... {ffmpeg_cmd}")
+                    print(f"... {ffmpeg_cmd}")
                 run_command(ffmpeg_cmd, verbose=verbose)
         except shutil.SameFileError:
             pass
@@ -320,13 +320,13 @@ def copy_images_list(
 
         ffmpeg_cmd += downscale_cmd
         if verbose:
-            CONSOLE.log(f"... {ffmpeg_cmd}")
+            print(f"... {ffmpeg_cmd}")
         run_command(ffmpeg_cmd, verbose=verbose)
 
     if num_frames == 0:
-        CONSOLE.log("[bold red]:skull: No usable images in the data folder.")
+        print("[bold red]:skull: No usable images in the data folder.")
     else:
-        CONSOLE.log(f"[bold green]:tada: Done copying images with prefix '{image_prefix}'.")
+        print(f"[bold green]:tada: Done copying images with prefix '{image_prefix}'.")
 
     return copied_image_paths
 
@@ -367,7 +367,7 @@ def copy_and_upscale_polycam_depth_maps_list(
             nearest_neighbor=True,
         )
 
-    CONSOLE.log("[bold green]:tada: Done upscaling depth maps.")
+    print("[bold green]:tada: Done upscaling depth maps.")
     return copied_depth_map_paths
 
 
@@ -397,7 +397,7 @@ def copy_images(
         image_paths = list_images(data)
 
         if len(image_paths) == 0:
-            CONSOLE.log("[bold red]:skull: No usable images in the data folder.")
+            print("[bold red]:skull: No usable images in the data folder.")
             sys.exit(1)
 
         copied_images = copy_images_list(
@@ -456,7 +456,7 @@ def downscale_images(
                 ffmpeg_cmd = " ".join(ffmpeg_cmd)
                 run_command(ffmpeg_cmd, verbose=verbose)
 
-    CONSOLE.log("[bold green]:tada: Done downscaling images.")
+    print("[bold green]:tada: Done downscaling images.")
     downscale_text = [f"[bold blue]{2**(i+1)}x[/bold blue]" for i in range(num_downscales)]
     downscale_text = ", ".join(downscale_text[:-1]) + " and " + downscale_text[-1]
     return f"We downsampled the images by {downscale_text}"
@@ -543,7 +543,7 @@ def generate_circle_mask(height: int, width: int, percent_radius) -> Optional[np
         The mask or None if the radius is too large.
     """
     if percent_radius <= 0.0:
-        CONSOLE.log("[bold red]:skull: The radius of the circle mask must be positive.")
+        print("[bold red]:skull: The radius of the circle mask must be positive.")
         sys.exit(1)
     if percent_radius >= 1.0:
         return None
@@ -568,7 +568,7 @@ def generate_crop_mask(height: int, width: int, crop_factor: Tuple[float, float,
     if np.all(np.array(crop_factor) == 0.0):
         return None
     if np.any(np.array(crop_factor) < 0.0) or np.any(np.array(crop_factor) > 1.0):
-        CONSOLE.log("[bold red]Invalid crop percentage, must be between 0 and 1.")
+        print("[bold red]Invalid crop percentage, must be between 0 and 1.")
         sys.exit(1)
     top, bottom, left, right = crop_factor
     mask = np.zeros((height, width), dtype=np.uint8)
@@ -641,5 +641,5 @@ def save_mask(
             interpolation=cv2.INTER_NEAREST,
         )
         cv2.imwrite(str(mask_path_i), mask_i)
-    CONSOLE.log(":tada: Generated and saved masks.")
+    print(":tada: Generated and saved masks.")
     return mask_path / "mask.png"

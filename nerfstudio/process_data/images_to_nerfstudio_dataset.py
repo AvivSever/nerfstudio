@@ -52,7 +52,7 @@ class ImagesToNerfstudioDataset(ColmapConverterToNerfstudioDataset):
                 raise ValueError("Cannot use eval_data with camera_type equirectangular.")
 
             pers_size = equirect_utils.compute_resolution_from_equirect(self.data, self.images_per_equirect)
-            CONSOLE.log(f"Generating {self.images_per_equirect} {pers_size} sized images per equirectangular image")
+            print(f"Generating {self.images_per_equirect} {pers_size} sized images per equirectangular image")
             self.data = equirect_utils.generate_planar_projections_from_equirectangular(
                 self.data, pers_size, self.images_per_equirect, crop_factor=self.crop_factor
             )
@@ -127,7 +127,7 @@ class ImagesToNerfstudioDataset(ColmapConverterToNerfstudioDataset):
             image_rename_map,
         )
 
-        CONSOLE.log("[bold green]:tada: :tada: :tada: All DONE :tada: :tada: :tada:")
+        print("[bold green]:tada: :tada: :tada: All DONE :tada: :tada: :tada:")
 
         for summary in summary_log:
-            CONSOLE.log(summary)
+            print(summary)

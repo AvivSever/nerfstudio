@@ -56,7 +56,7 @@ def get_colmap_version(colmap_cmd: str, default_version=3.8) -> float:
     for line in output.split("\n"):
         if line.startswith("COLMAP"):
             return float(line.split(" ")[1])
-    CONSOLE.print(f"[bold red]Could not find COLMAP version. Using default {default_version}")
+    print(f"[bold red]Could not find COLMAP version. Using default {default_version}")
     return default_version
 
 
@@ -128,7 +128,7 @@ def run_colmap(
     with status(msg="[bold yellow]Running COLMAP feature extractor...", spinner="moon", verbose=verbose):
         run_command(feature_extractor_cmd, verbose=verbose)
 
-    CONSOLE.log("[bold green]:tada: Done extracting COLMAP features.")
+    print("[bold green]:tada: Done extracting COLMAP features.")
 
     # Feature matching
     feature_matcher_cmd = [
@@ -142,7 +142,7 @@ def run_colmap(
     feature_matcher_cmd = " ".join(feature_matcher_cmd)
     with status(msg="[bold yellow]Running COLMAP feature matcher...", spinner="runner", verbose=verbose):
         run_command(feature_matcher_cmd, verbose=verbose)
-    CONSOLE.log("[bold green]:tada: Done matching COLMAP features.")
+    print("[bold green]:tada: Done matching COLMAP features.")
 
     # Bundle adjustment
     sparse_dir = colmap_dir / "sparse"
@@ -164,7 +164,7 @@ def run_colmap(
         verbose=verbose,
     ):
         run_command(mapper_cmd, verbose=verbose)
-    CONSOLE.log("[bold green]:tada: Done COLMAP bundle adjustment.")
+    print("[bold green]:tada: Done COLMAP bundle adjustment.")
     with status(msg="[bold yellow]Refine intrinsics...", spinner="dqpb", verbose=verbose):
         bundle_adjuster_cmd = [
             f"{colmap_cmd} bundle_adjuster",
@@ -173,7 +173,7 @@ def run_colmap(
             "--BundleAdjustment.refine_principal_point 1",
         ]
         run_command(" ".join(bundle_adjuster_cmd), verbose=verbose)
-    CONSOLE.log("[bold green]:tada: Done refining intrinsics.")
+    print("[bold green]:tada: Done refining intrinsics.")
 
 
 def parse_colmap_camera_params(camera) -> Dict[str, Any]:

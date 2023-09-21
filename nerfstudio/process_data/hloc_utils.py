@@ -79,14 +79,14 @@ def run_hloc(
         refine_pixsfm: If True, refine the reconstruction using pixel-perfect-sfm.
     """
     if not _HAS_HLOC:
-        CONSOLE.print(
+        print(
             f"[bold red]Error: To use this set of parameters ({feature_type}/{matcher_type}/hloc), "
             "you must install hloc toolbox!!"
         )
         sys.exit(1)
 
     if refine_pixsfm and not _HAS_PIXSFM:
-        CONSOLE.print("[bold red]Error: use refine_pixsfm, you must install pixel-perfect-sfm toolbox!!")
+        print("[bold red]Error: use refine_pixsfm, you must install pixel-perfect-sfm toolbox!!")
         sys.exit(1)
 
     outputs = colmap_dir

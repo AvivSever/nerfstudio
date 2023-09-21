@@ -163,7 +163,7 @@ def metashape_to_json(
         if sensor_id not in sensor_dict:
             # this should only happen when we have a sensor that doesn't have calibration
             if verbose:
-                CONSOLE.print(f"Missing sensor calibration for {camera.get('label')}, Skipping")
+                print(f"Missing sensor calibration for {camera.get('label')}, Skipping")
             num_skipped += 1
             continue
         # Add all sensor parameters to this frame.
@@ -171,7 +171,7 @@ def metashape_to_json(
 
         if camera.find("transform") is None:
             if verbose:
-                CONSOLE.print(f"Missing transforms data for {camera.get('label')}, Skipping")
+                print(f"Missing transforms data for {camera.get('label')}, Skipping")
             num_skipped += 1
             continue
         transform = np.array([float(x) for x in camera.find("transform").text.split()]).reshape((4, 4))  # type: ignore

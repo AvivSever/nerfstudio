@@ -63,7 +63,7 @@ def realitycapture_to_json(
         basename = name.rpartition(".")[0]
         if basename not in image_filename_map:
             if verbose:
-                CONSOLE.print(f"Missing image for camera data {basename}, Skipping")
+                print(f"Missing image for camera data {basename}, Skipping")
             missing_image_data += 1
             continue
 

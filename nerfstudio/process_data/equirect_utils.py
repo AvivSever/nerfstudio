@@ -250,7 +250,7 @@ def generate_planar_projections_from_equirectangular(
 
     for i in crop_factor:
         if i < 0 or i > 1:
-            CONSOLE.print("[bold red] Invalid crop factor. All values must be in [0,1].")
+            print("[bold red] Invalid crop factor. All values must be in [0,1].")
             sys.exit(1)
 
     device = torch.device("cuda")
